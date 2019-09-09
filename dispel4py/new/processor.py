@@ -18,8 +18,10 @@ This module contains methods that are used by different mappings.
 
 From the commandline, run the following command::
 
-    dispel4py <mapping> <module>  [-h] [-a attribute] [-f inputfile]\
-                                  [-i iterations] [...]
+    dispel4py <mapping> <module>  [-h] [-a attribute] [-f inputfile] \
+                                  [-i iterations] \
+                                  [--provenance-config [provenance-config-path]] \
+                                  [...]
 
 with parameters
 
@@ -29,15 +31,18 @@ with parameters
 :-a attr:   name of the graph attribute within the module (optional)
 :-f file:   file containing input data in JSON format (optional)
 :-i iter:   number of iterations to compute (default is 1)
+:--provenance-config:
+            file containing the provenance configuration
 :-h:        print this help page
 
 Other parameters might be required by the target mapping, for example the
 number of processes if running in a parallel environment.
 
 '''
-
+import sys
 import argparse
 import os
+import os.path
 import types
 
 from dispel4py.core import GROUPING
@@ -166,7 +171,7 @@ class GroupByCommunication(object):
         self.destinations = destinations
         self.input_name = input_name
         self.name = groupby
-
+        
     def getDestination(self, data):
         output = tuple([data[self.input_name][x] for x in self.groupby])
         dest_index = abs(make_hash(output)) % len(self.destinations)
@@ -203,6 +208,10 @@ def _getConnectedInputs(node, graph):
 
 
 def _getNumProcesses(size, numSources, numProcesses, totalProcesses):
+    
+    if (numProcesses>1) or (numProcesses==0):
+        return numProcesses
+    
     div = max(1, totalProcesses - numSources)
     return int(numProcesses * (size - numSources) / div)
 
@@ -233,7 +242,7 @@ def _assign_processes(workflow, size):
         node_counter = 0
         for node in graph.nodes():
             pe = node.getContainedObject()
-            prcs = 1 if pe.id in sources else _getNumProcesses(
+            prcs = 1 if pe.id in sources or (hasattr(pe, 'single') and pe.single==True) else _getNumProcesses(
                 size, numSources, pe.numprocesses, totalProcesses)
             processes[pe.id] = range(node_counter, node_counter + prcs)
             node_counter = node_counter + prcs
@@ -322,10 +331,29 @@ def get_partitions(workflow):
     try:
         partitions = workflow.partitions
     except AttributeError:
+        print ("no predefined partitions")
         sourcePartition = []
         otherPartition = []
         graph = workflow.graph
         for node in graph.nodes():
+            pe = node.getContainedObject()
+            if not _getConnectedInputs(node, graph):
+                sourcePartition.append(pe)
+            else:
+                otherPartition.append(pe)
+        partitions = [sourcePartition, otherPartition]
+        workflow.partitions = partitions
+    return partitions
+
+def get_partitions_adv(workflow):
+    try:
+        partitions = workflow.partitions
+    except AttributeError:
+        print ("no predefined partitions")
+        sourcePartition = []
+        otherPartition = []
+        graph = workflow.graph
+        for node in list(graph.nodes()):
             pe = node.getContainedObject()
             if not _getConnectedInputs(node, graph):
                 sourcePartition.append(pe)
@@ -354,13 +382,13 @@ def create_partitioned(workflow_all):
         component_ids = [pe.id for pe in part]
         workflow = copy.deepcopy(workflow_all)
         graph = workflow.graph
-        for node in graph.nodes():
+        for node in list(graph.nodes()): 
             if node.getContainedObject().id not in component_ids:
                 graph.remove_node(node)
         processes, inputmappings, outputmappings = \
             assign_and_connect(workflow, len(graph.nodes()))
         proc_to_pe = {}
-        for node in list(graph.nodes()):
+        for node in graph.nodes():
             pe = node.getContainedObject()
             proc_to_pe[processes[pe.id][0]] = pe
         for node in graph.nodes():
@@ -646,7 +674,7 @@ class SimpleWriter(object):
         self.results = {}
 
     def write(self, output_name, data):
-        # self.pe.log('Writing %s to %s' % (data, output_name))
+        #self.pe.log('SPE Writing %s to %s' % (data, output_name))
         try:
             destinations = self.output_mappings[output_name]
             dest_data = data
@@ -667,12 +695,16 @@ class SimpleWriter(object):
             if self.result_mappings is None:
                 self.simple_pe.wrapper._write((self.pe.id, output_name),
                                               [data])
+                
         # now check if the output is in the named results
         # (in case of a Tee) then data gets written to the PE results as well
         try:
+            
             if output_name in self.result_mappings[self.pe.id]:
                 self.simple_pe.wrapper._write((self.pe.id, output_name),
                                               [data])
+                
+                #self.pe.log('SPE Writing %s to %s' % (data, output_name))
         except:
             pass
 
@@ -691,6 +723,10 @@ def create_arg_parser():  # pragma: no cover
                         help='input dataset in JSON format')
     parser.add_argument('-i', '--iter', metavar='iterations', type=int,
                         help='number of iterations', default=1)
+    parser.add_argument('--provenance-config', dest='provenance',
+                        metavar='provenance-config-path', type=str,
+                        nargs='?', help=("trace provenance with given config (JSON)."
+                                         "'--provenance --help' for help on additional options."))
     return parser
 
 
@@ -734,16 +770,25 @@ def create_inputs(args, graph):
 
     return inputs
 
-
 def load_graph_and_inputs(args):
     from dispel4py.utils import load_graph
-
     graph = load_graph(args.module, args.attr)
     if graph is None:
         return None, None
 
     graph.flatten()
     inputs = create_inputs(args, graph)
+
+    if args.provenance:
+        if not os.path.exists(args.provenance):
+            print("Can't load provenance configuration %s" % args.provenance)
+        else:
+            from dispel4py.provenance import init_provenance_config, configure_prov_run, ProvenanceType
+            prov_config, remaining = init_provenance_config(args, inputs)
+             ## Ignore returned remaining command line arguments. Will be taken care of in main()
+            print(prov_config)
+            configure_prov_run(graph, provImpClass=(ProvenanceType,),sprovConfig=prov_config )
+
     return graph, inputs
 
 
@@ -751,15 +796,17 @@ def parse_common_args():   # pragma: no cover
     parser = create_arg_parser()
     return parser.parse_known_args()
 
-
+import time
 def main():   # pragma: no cover
     from importlib import import_module
-
+    
     args, remaining = parse_common_args()
+
     graph, inputs = load_graph_and_inputs(args)
+
     if graph is None:
         return
-
+    
     try:
         # see if platform is in the mappings file as a simple name
         target = config[args.target]
@@ -776,9 +823,14 @@ def main():   # pragma: no cover
         # no other arguments required for target
         pass
     process = getattr(import_module(target), 'process')
-    error_message = process(graph, inputs=inputs, args=args)
-    if error_message:
-        print(error_message)
+    elapsed_time=0
+    start_time = time.time()
+    errormsg = process(graph, inputs=inputs, args=args)
+    if errormsg:
+        print(errormsg)
+        
+    print ("ELAPSED TIME: "+str(time.time()-start_time))
+    
 
 if __name__ == "__main__":  # pragma: no cover
     main()

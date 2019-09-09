@@ -49,9 +49,10 @@ import argparse
 import copy
 import multiprocessing
 import traceback
+import os
 import types
 from dispel4py.new.processor \
-    import GenericWrapper, simpleLogger, STATUS_ACTIVE, STATUS_TERMINATED
+    import GenericWrapper, simpleLogger, STATUS_ACTIVE, STATUS_TERMINATED, SimpleProcessingPE
 from dispel4py.new import processor
 
 
@@ -67,7 +68,8 @@ def parse_args(args, namespace):    # pragma: no cover
                         action='store_true')
     parser.add_argument('-n', '--num', metavar='num_processes', required=True,
                         type=int, help='number of processes to run')
-    result = parser.parse_args(args, namespace)
+
+    result, remaining = parser.parse_known_args(args, namespace)
     return result
 
 
@@ -190,7 +192,8 @@ class MultiProcessingWrapper(GenericWrapper):
         return data, status
 
     def _write(self, name, data):
-        # self.pe.log('Writing %s to %s' % (data, name))
+        #self.pe.log('MP Writing %s to %s' % (data, name))
+
         try:
             targets = self.targets[name]
         except KeyError:
@@ -199,10 +202,15 @@ class MultiProcessingWrapper(GenericWrapper):
                 self.result_queue.put((self.pe.id, name, data))
             return
         for (inputName, communication) in targets:
+
+            if isinstance(self.pe, SimpleProcessingPE):
+                dest = communication.getDestination({inputName: data[0]})
+            else:
+                dest = communication.getDestination({inputName: data})
+
             output = {inputName: data}
-            dest = communication.getDestination(output)
             for i in dest:
-                # self.pe.log('Writing out %s' % output)
+                #self.pe.log('Writing out %s' % output)
                 try:
                     self.output_queues[i].put((output, STATUS_ACTIVE))
                 except:
@@ -213,17 +221,3 @@ class MultiProcessingWrapper(GenericWrapper):
             for (inputName, communication) in targets:
                 for i in communication.destinations:
                     self.output_queues[i].put((None, STATUS_TERMINATED))
-
-
-def main():    # pragma: no cover
-    from dispel4py.new.processor \
-        import load_graph_and_inputs, parse_common_args
-
-    args, remaining = parse_common_args()
-    args = parse_args(remaining, args)
-
-    graph, inputs = load_graph_and_inputs(args)
-    if graph is not None:
-        errormsg = process(graph, inputs, args)
-        if errormsg:
-            print(errormsg)

@@ -81,7 +81,7 @@ def parse_args(args, namespace):
         description='Submit a dispel4py graph to MPI processes.')
     parser.add_argument('-s', '--simple', help='force simple processing',
                         action='store_true')
-    result = parser.parse_args(args, namespace)
+    result, remaining = parser.parse_known_args(args, namespace)
     return result
 
 
