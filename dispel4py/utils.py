@@ -20,6 +20,8 @@ from dispel4py.workflow_graph import WorkflowGraph
 
 from importlib import import_module
 from imp import load_source
+import sys
+import os.path
 import traceback
 
 
@@ -37,10 +39,17 @@ def findWorkflowGraph(mod, attr):
                     graph = attr
     return graph
 
-
 def loadGraphFromFile(module_name, path, attr=None):
-    mod = load_source(module_name, path)
-    attr = findWorkflowGraph(mod, attr)
+    if (sys.version_info > (3, 0)):
+        from importlib import util
+        spec = util.spec_from_file_location(module_name, path)
+        module = util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+    else:
+        module = load_source(module_name, path)
+
+    attr = findWorkflowGraph(module, attr)
     return attr
 
 
@@ -69,7 +78,8 @@ def load_graph(graph_source, attr=None):
 
     # maybe it's a file?
     try:
-        return loadGraphFromFile('temp', graph_source, attr)
+        module_name = os.path.splitext(os.path.basename(graph_source))[0]
+        return loadGraphFromFile(module_name, graph_source, attr)
     except IOError:
         # it's not a file
         error_message += 'No file "%s"\n' % graph_source

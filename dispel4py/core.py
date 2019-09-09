@@ -118,6 +118,7 @@ Example implementation::
         self.pickleIgnore = list(vars(self).keys())
         self.numprocesses = numprocesses
         self.name = self.__class__.__name__
+        #print "SETTING NAME: "+self.name
         self.id = self.name + str(uuid.uuid4())
 
     def _add_input(self, name, grouping=None, tuple_type=None):
@@ -265,12 +266,15 @@ Example implementation::
         Allows for preprocessing of data to be written to the output pipe.
         This method should be overridden by PE base classes.
         '''
+        #self.log(type(self))
         self._write(name, data)
+        
 
     def _write(self, name, data, **kwargs):
         '''
         This writes the 'data' to the output pipe with name 'name' of this PE.
         '''
+         
         try:
             output = self.outputconnections[name]
             output[WRITER].write(data)

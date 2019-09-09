@@ -125,6 +125,7 @@ class WorkflowGraph(object):
         if self.graph.has_edge(fromWfNode, toWfNode):
             self.graph[fromWfNode][toWfNode]['ALL_CONNECTIONS']\
                 .append((fromConnection, toConnection))
+
         else:
             self.graph.add_edge(fromWfNode, toWfNode,
                                 **{'FROM_CONNECTION': fromConnection,
@@ -316,12 +317,28 @@ def draw(graph):
     return dot
 
 
-def drawDot(graph):   # pragma: no cover
+def drawDot(graph, img_type='png'):   # pragma: no cover
     '''
-    Draws the workflow as a graph and creates a PNG image using graphviz dot.
+    Draws the workflow as a graph and creates an image using graphviz dot.
+    The image type is PNG by default.
+    See https://graphviz.gitlab.io/_pages/doc/info/output.html for supported
+    output types.
     '''
     from subprocess import Popen, PIPE
     dot = draw(graph)
-    p = Popen(['dot', '-T', 'png'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+
+    p = Popen(['dot', '-T', img_type], stdout=PIPE, stdin=PIPE, stderr=PIPE)
     stdout, stderr = p.communicate(dot.encode('utf-8'))
     return stdout
+
+def write_image(graph, filename, img_type='png'):
+    '''
+    Draws the workflow as a graph using graphviz dot and writes the image
+    to the named output file.
+    The output format is PNG by default.
+    See https://graphviz.gitlab.io/_pages/doc/info/output.html for supported
+    output formats.
+    '''
+
+    with open(filename, 'wb') as f:
+        f.write(drawDot(graph, img_type))
