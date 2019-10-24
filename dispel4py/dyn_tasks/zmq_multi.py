@@ -48,6 +48,7 @@ def map_output(graph, node, output_name):
     return result
 
 def process(workflow, inputs, args):
+    self.log("args ct %s" % args.ct)
     size = args.num
     topic = ""
     frontend_port = 5559
