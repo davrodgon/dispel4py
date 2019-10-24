@@ -183,7 +183,7 @@ def parse_args(args, namespace):
     parser.add_argument('-n', '--num', metavar='num_processes', required=True,
                         type=int, help='number of processes to run')
     parser.add_argument('-t', '--topic', default=str(uuid.uuid4()),
-                        help='Kafka topic name')
+                        help='topic name')
     result = parser.parse_args(args, namespace)
     return result
 
