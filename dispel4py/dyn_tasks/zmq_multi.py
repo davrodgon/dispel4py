@@ -48,7 +48,6 @@ def map_output(graph, node, output_name):
     return result
 
 def process(workflow, inputs, args):
-    self.log("args ct %s" % args.ct)
     size = args.num
     topic = ""
     frontend_port = 5559
@@ -63,7 +62,6 @@ def process(workflow, inputs, args):
             cp = copy.deepcopy(workflow)
             cp.rank = proc
             workers[proc] = cp
-
         # add all the provided inputs to the queue
         provided_inputs = processor.get_inputs(pe, inputs)
         if provided_inputs is not None:
