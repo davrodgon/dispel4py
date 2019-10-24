@@ -176,7 +176,7 @@ def _processWorker(topic, proc, workflow):
 def parse_args(args, namespace):
     parser = argparse.ArgumentParser(
         prog='dispel4py',
-        description='Submit a dispel4py graph to multiprocessing.')
+        description='Submit a dispel4py graph to zeromq multi processing')
     parser.add_argument('-ct', '--consumer-timeout',
                         help='stop consumers after timeout in ms',
                         type=int)
