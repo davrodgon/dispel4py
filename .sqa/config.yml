@@ -1,4 +1,12 @@
 config:
   project_repos:
-    myrepo:
+    dispel4py:
       repo: 'https://github.com/davrodgon/dispel4py.git'
+
+  sqa_criteria:
+     qc_style:
+       dispel4py:
+         container: disel4py-testing
+         tox:
+           tox_file: /dispel4py-testing/tox.ini
+           testenv: stylecheck

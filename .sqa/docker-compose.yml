@@ -1,1 +1,11 @@
 version: "3.6"
+
+services:
+  myrepo-testing:
+    image: "indigodatacloud/ci-images:python3.6"
+    hostname: "dispel4py-testing-host"
+    volumes:
+     - type: bind
+       source: ./dispel4py
+       target: /dispel4py-testing
+
