@@ -1,0 +1,4 @@
+config:
+  project_repos:
+    myrepo:
+      repo: 'https://github.com/davrodgon/dispel4py.git'
