@@ -9,4 +9,5 @@ config:
          container: dispel4py-testing
          tox:
            tox_file: /dispel4py-testing/tox.ini
-           testenv: stylecheck
+           testenv: 
+               - pep8
