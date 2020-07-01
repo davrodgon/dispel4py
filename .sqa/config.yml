@@ -13,13 +13,4 @@ sqa_criteria:
           testenv: 
             - pep8
 
-  qc_coverage:
-    repos:
-      dispel4py:
-        container: dispel4py-testing
-        tox:
-          tox_file: /dispel4py-testing/tox.ini
-          testenv: 
-            - cover
-            - cobertura
 
