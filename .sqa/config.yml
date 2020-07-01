@@ -3,12 +3,23 @@ config:
     dispel4py:
       repo: 'https://github.com/davrodgon/dispel4py.git'
 
-  sqa_criteria:
-    qc_style:
-      repos:
-        dispel4py:
-          container: dispel4py-testing
-          tox:
-            tox_file: /dispel4py-testing/tox.ini
-            testenv: 
-               - pep8
+sqa_criteria:
+  qc_style:
+    repos:
+      dispel4py:
+        container: dispel4py-testing
+        tox:
+          tox_file: /dispel4py-testing/tox.ini
+          testenv: 
+            - pep8
+
+  qc_coverage:
+    repos:
+      dispel4py:
+        container: dispel4py-testing
+        tox:
+          tox_file: /dispel4py-testing/tox.ini
+          testenv: 
+            - cover
+            - cobertura
+
