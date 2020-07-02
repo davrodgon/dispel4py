@@ -28,8 +28,8 @@ import zmq
 from zmq.devices.basedevice import ProcessDevice
 
 def init_streamer(frontend_port,backend_port):
-    streamerdevice  = ProcessDevice(zmq.STREAMER, zmq.PULL, zmq.PUSH)
-    streamerdevice.bind_in("tcp://127.0.0.1:%d" % frontend_port )
+    streamerdevice = ProcessDevice(zmq.STREAMER, zmq.PULL, zmq.PUSH)
+    streamerdevice.bind_in("tcp://127.0.0.1:%d" % frontend_port)
     streamerdevice.bind_out("tcp://127.0.0.1:%d" % backend_port)
     streamerdevice.setsockopt_in(zmq.IDENTITY, "PULL".encode('utf-8'))
     streamerdevice.setsockopt_out(zmq.IDENTITY, "PUSH".encode('utf-8'))
@@ -78,7 +78,8 @@ def process(workflow, inputs, args):
 
     jobs = []
     for proc, workflow in workers.items():
-        p = multiprocessing.Process(target=_processWorker, 
+        p = multiprocessing.Process(
+                target=_processWorker,
                 args=(topic, proc, workflow,))
         jobs.append(p)
 
@@ -91,23 +92,23 @@ def process(workflow, inputs, args):
 
 
 class ZMQProducer():
-    def __init__(self,port,value_serializer=msgpack.packb):
+    def __init__(self, port, value_serializer=msgpack.packb):
         self.port = port
-        self.value_serializer=value_serializer
+        self.value_serializer = value_serializer
         context = zmq.Context()
         self.socket = context.socket(zmq.PUSH)
         self.socket.connect("tcp://127.0.0.1:%d" % port)
 
-    def write(self,value):
+    def write(self, value):
         msg = msgpack.packb(value, use_bin_type=True)    
         self.socket.send(msg)
 
-    def send(self,topic,value):
+    def send(self, topic, value):
         self.write(value=value)
 
 
 class ZMQConsumer():
-    def __init__(self, port, value_serializer = msgpack.packb):
+    def __init__(self, port, value_serializer=msgpack.packb):
         self.port = port
         self.value_serializer = value_serializer
         context = zmq.Context()
@@ -163,18 +164,23 @@ def _processWorker(topic, proc, workflow):
             print('{} receiver input: {}'.format(pe_id, data))
             pe = pes[pe_id]
             for o in pe.outputconnections:
-                pe.outputconnections[o]['writer'] = GenericWriter(producer, 
+                pe.outputconnections[o]['writer'] = GenericWriter(
+                        producer, 
                         pe_id, o)
             output = pe.process(data)
             print('{} writing output: {}'.format(pe.id, output))
             for output_name, output_value in output.items():
-                destinations = map_output(workflow.graph, 
-                        nodes[pe_id], output_name)
+                destinations = map_output(
+                        workflow.graph,
+                        nodes[pe_id],
+                        output_name)
                 if not destinations:
-                    print('Output collected from {}: {}'
-                            .format(pe_id, output_value))
+                    print(
+                        'Output collected from {}: {}'
+                        .format(pe_id, output_value))
                 for dest_id, input_name in destinations:
-                    producer.send(topic, value=(dest_id, 
+                    producer.send(topic, value=(
+                        dest_id,
                         {input_name: output_value}))
         except Exception as e:
             print(e)
