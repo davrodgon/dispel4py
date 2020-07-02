@@ -90,5 +90,6 @@ class SimpleWrapper(storm.BasicBolt):
             storm.log("Dispel4Py ------> %s: %s" % (self.script.id,
                                                     traceback.format_exc(), ))
 
+
 if __name__ == "__main__":
     SimpleWrapper().run()
