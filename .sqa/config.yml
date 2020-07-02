@@ -11,6 +11,6 @@ sqa_criteria:
         tox:
           tox_file: /dispel4py-testing/tox.ini
           testenv: 
-            - pep8
+            - flak8
 
 
