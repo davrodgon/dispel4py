@@ -17,20 +17,19 @@ Other parameters:
 
 '''
 
+from zmq.devices.basedevice import ProcessDevice
+import zmq
+import time
+from dispel4py.new import processor
+import uuid
+import multiprocessing
 import argparse
 import copy
 import
-import multiprocessing
-import uuid
-from dispel4py.new import processor
-import time
-import zmq
-from zmq.devices.basedevice import ProcessDevice
-
 
 
 class ZMQProducer():
-    def __init__(self, hostname, port,value_serializer=msgpack.packb):
+    def __init__(self, hostname, port, value_serializer=msgpack.packb):
         try:
             host_remote = socket.gethostbyaddr(hostname)[0]
         except:
@@ -44,7 +43,7 @@ class ZMQProducer():
 
         self.host_remote = host_remote
         self.port = port
-        self.value_serializer=value_serializer
+        self.value_serializer = value_serializer
 
         if (host_remote == host_local):
             url_connect = "ipc:///tmp/dispel4py/%d" % self.port
@@ -55,19 +54,18 @@ class ZMQProducer():
         self.socket = context.socket(zmq.PUSH)
         self.socket.connect("tcp://127.0.0.1:%d" % port)
 
-    def write(self,value):
-        msg = msgpack.packb(value, use_bin_type=True)    
+    def write(self, value):
+        msg = msgpack.packb(value, use_bin_type=True)
         self.socket.send(msg)
 
-    def send(self,topic,value):
+    def send(self, topic, value):
         self.write(value=value)
 
 
-
 class ZMQConsumer():
-    def __init__(self,port,value_serializer=msgpack.packb):
+    def __init__(self, port, value_serializer=msgpack.packb):
         self.port = port
-        self.value_serializer=value_serializer
+        self.value_serializer = value_serializer
         context = zmq.Context()
         self.socket = context.socket(zmq.PULL)
         self.socket.connect("tcp://127.0.0.1:%d" % port)
@@ -85,7 +83,7 @@ class ZMQConsumer():
             raise StopIteration
         return value
 
- 
+
 class GenericWriter():
     def __init__(self, producer, pe_id, output_name):
         self.producer = producer
@@ -103,7 +101,8 @@ class GenericWriter():
 def _processWorker(topic, proc, workflow):
     frontend_port = 5559
     backend_port = 5560
-    pes = {node.getContainedObject().id: node.getContainedObject() for node in workflow.graph.nodes()}
+    pes = {node.getContainedObject().id: node.getContainedObject()
+           for node in workflow.graph.nodes()}
     nodes = {node.getContainedObject().id: node for node in workflow.graph.nodes()}
     producer = ZMQProducer(port=frontend_port)
     consumer = ZMQConsumer(port=backend_port)
@@ -116,18 +115,22 @@ def _processWorker(topic, proc, workflow):
 
         try:
             pe_id, data = value
-            print('{} receiver input: {}'.format(pe_id,data))
+            print('{} receiver input: {}'.format(pe_id, data))
             pe = pes[pe_id]
             for o in pe.outputconnections:
-                pe.outputconnections[o]['writer'] = GenericWriter(producer, pe_id, o)
+                pe.outputconnections[o]['writer'] = GenericWriter(
+                    producer, pe_id, o)
             output = pe.process(data)
             print('{} writing output: {}'.format(pe.id, output))
             for output_name, output_value in output.items():
-                destinations = map_output(workflow.graph, nodes[pe_id], output_name)
+                destinations = map_output(
+                    workflow.graph, nodes[pe_id], output_name)
                 if not destinations:
-                    print('Output collected from {}: {}'.format(pe_id, output_value))
+                    print('Output collected from {}: {}'.format(
+                        pe_id, output_value))
                 for dest_id, input_name in destinations:
-                    producer.send(topic, value=(dest_id, {input_name: output_value}))
+                    producer.send(topic, value=(
+                        dest_id, {input_name: output_value}))
         except Exception as e:
             print(e)
             pass
@@ -146,6 +149,3 @@ def parse_args(args, namespace):
                         help='Kafka topic name')
     result = parser.parse_args(args, namespace)
     return result
-
-
-

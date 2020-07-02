@@ -175,7 +175,7 @@ class StdDevReducePE(GenericPE):
 
     def _postprocess(self):
         std_dev = math.sqrt((self.count * self.sum_squared -
-                            self.sum * self.sum) /
+                             self.sum * self.sum) /
                             (self.count * (self.count - 1)))
         self.write(self.OUTPUT_NAME, (std_dev, self.count,
                                       self.sum, self.sum_squared))

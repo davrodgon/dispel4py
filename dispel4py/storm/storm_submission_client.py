@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from storm import ttypes as tt
+from thrift.protocol import TBinaryProtocol
+from thrift.transport import TTransport
+from dispel4py.storm.client import StormClient
 import sys
 
 sys.path.append('resources')
-
-from dispel4py.storm.client import StormClient
-
-from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-from storm import ttypes as tt
 
 
 if __name__ == '__main__':

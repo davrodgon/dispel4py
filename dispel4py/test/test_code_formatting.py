@@ -11,7 +11,7 @@ import os
 
 FLAKE8_IGNORE_CODES = [
     "E402"
-    ]
+]
 
 
 def test_flake8():
@@ -44,7 +44,7 @@ def test_flake8():
     flake8_style = flake8.get_style_guide(
         parse_argv=False, config_file=flake8.main.DEFAULT_CONFIG)
     flake8_style.options.ignore = tuple(set(
-            flake8_style.options.ignore).union(set(FLAKE8_IGNORE_CODES)))
+        flake8_style.options.ignore).union(set(FLAKE8_IGNORE_CODES)))
 
     report = flake8_style.check_files(files)
 
@@ -52,6 +52,7 @@ def test_flake8():
     assert report.counters["files"] > 10
     # And no errors occured.
     assert report.get_count() == 0
+
 
 if __name__ == "__main__":
     test_flake8()

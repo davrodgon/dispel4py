@@ -48,20 +48,18 @@ For example::
     TestOneInOneOut5 (rank 2): Processed 5 iterations.
 '''
 
+import traceback
+import types
+import sys
+import argparse
+from dispel4py.new import processor
+from dispel4py.new.processor\
+    import GenericWrapper, simpleLogger, STATUS_TERMINATED, STATUS_ACTIVE
 from mpi4py import MPI
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
-
-from dispel4py.new.processor\
-    import GenericWrapper, simpleLogger, STATUS_TERMINATED, STATUS_ACTIVE
-from dispel4py.new import processor
-
-import argparse
-import sys
-import types
-import traceback
 
 
 def mpi_excepthook(type, value, trace):

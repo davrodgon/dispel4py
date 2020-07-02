@@ -35,6 +35,7 @@ args = argparse.Namespace
 args.num = 5
 args.simple = False
 
+
 def testPipeline():
     prod = t.TestProducer()
     cons1 = t.TestOneInOneOut()
@@ -45,7 +46,8 @@ def testPipeline():
     args = argparse.Namespace
     args.num = 5
     args.simple = False
-    process(graph, inputs={ prod : [ {}, {}, {}  ] }, args=args )
+    process(graph, inputs={prod: [{}, {}, {}]}, args=args)
+
 
 def testSquare():
     graph = WorkflowGraph()
@@ -58,7 +60,8 @@ def testSquare():
     graph.connect(cons1, 'output', last, 'input0')
     graph.connect(cons2, 'output', last, 'input1')
     args.num = 4
-    process(graph, inputs={ prod : [{}]}, args=args )
+    process(graph, inputs={prod: [{}]}, args=args)
+
 
 def testTee():
     graph = WorkflowGraph()
@@ -71,9 +74,9 @@ def testTee():
     args.num = 3
     process(graph, inputs={prod: [{}, {}, {}, {}, {}]}, args=args)
 
-#print '='*20 + 'PIPELINE' + '='*20
-#testPipeline()
-#print '='*20 + 'SQUARE  ' + '='*20
-#testSquare()
-#print '='*20 + 'TEE     ' + '='*20
-#testTee()
+# print '='*20 + 'PIPELINE' + '='*20
+# testPipeline()
+# print '='*20 + 'SQUARE  ' + '='*20
+# testSquare()
+# print '='*20 + 'TEE     ' + '='*20
+# testTee()

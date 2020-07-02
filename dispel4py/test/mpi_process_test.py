@@ -16,6 +16,7 @@ from dispel4py.new.mpi_process import process
 from dispel4py.workflow_graph import WorkflowGraph
 from dispel4py.examples.graph_testing import testing_PEs as t
 
+
 def test_pipeline():
     prod = t.TestProducer()
     cons1 = t.TestOneInOneOut()

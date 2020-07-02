@@ -38,4 +38,5 @@ def testGrouping():
     graph.partitions = [[words], [cons1, cons2, cons3], [count]]
     return graph
 
+
 graph = testGrouping()

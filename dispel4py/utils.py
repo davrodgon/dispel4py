@@ -16,6 +16,10 @@
 Collection of dispel4py utilities.
 '''
 
+import copy
+from collections import deque
+from itertools import chain
+from sys import getsizeof
 from dispel4py.workflow_graph import WorkflowGraph
 
 from importlib import import_module
@@ -38,6 +42,7 @@ def findWorkflowGraph(mod, attr):
                         and not hasattr(attr, 'outputmappings'):
                     graph = attr
     return graph
+
 
 def loadGraphFromFile(module_name, path, attr=None):
     if (sys.version_info > (3, 0)):
@@ -92,11 +97,6 @@ def load_graph(graph_source, attr=None):
           (graph_source, error_message))
 
 
-from sys import getsizeof
-from itertools import chain
-from collections import deque
-
-
 def dict_handler(d):
     return chain.from_iterable(d.items())
 
@@ -140,11 +140,8 @@ def total_size(o, handlers={}, verbose=False):
 
     return sizeof(o)
 
-import copy
-
 
 def make_hash(o):
-
     """
     Makes a hash from a dictionary, list, tuple or set to any level, that
     contains only other hashable types (including any lists, tuples, sets, and

@@ -92,5 +92,6 @@ def testParallelPipeline():
 
     return graph
 
+
 ''' important: this is the graph_variable '''
 graph = testParallelPipeline()

@@ -103,5 +103,7 @@ def testPipeline(graph):
         graph.connect(prev, 'output', cons, 'input')
         prev = cons
     return graph
+
+
 ''' important: this is the graph_variable '''
 graph = testPipeline(WorkflowGraph())

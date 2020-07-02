@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from threading import Thread
+import Queue
+import types
+from dispel4py.new import processor
+from dispel4py.new.processor \
+    import GenericWrapper, simpleLogger, STATUS_TERMINATED, STATUS_ACTIVE
 from mpi4py import MPI
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
-
-from dispel4py.new.processor \
-    import GenericWrapper, simpleLogger, STATUS_TERMINATED, STATUS_ACTIVE
-from dispel4py.new import processor
-import types
 
 
 def process(workflow, inputs, args):
@@ -83,10 +84,6 @@ def process(workflow, inputs, args):
             wrapper.targets = outputmappings[rank]
             wrapper.sources = inputmappings[rank]
             wrapper.process()
-
-
-import Queue
-from threading import Thread
 
 
 def receive(wrapper):

@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+from dispel4py.workflow_graph import WorkflowGraph
+from dispel4py.base import ProducerPE
 from dispel4py.core import GenericPE
 from dispel4py.base import IterativePE
 
@@ -35,9 +37,6 @@ class MyFirstPE(GenericPE):
             return {'output': number}
 
 
-from dispel4py.base import ProducerPE
-
-
 class NumberProducer(ProducerPE):
 
     def __init__(self, limit):
@@ -56,9 +55,6 @@ class PrimeCollector(IterativePE):
 
     def _process(self, data):
         return data
-
-
-from dispel4py.workflow_graph import WorkflowGraph
 
 
 graph = WorkflowGraph()

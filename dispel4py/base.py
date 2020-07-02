@@ -16,6 +16,7 @@
 Base PEs implementing typical processing patterns.
 '''
 
+from dispel4py.workflow_graph import WorkflowGraph
 from dispel4py.core import GenericPE, NAME
 
 
@@ -145,14 +146,10 @@ class SimpleFunctionPE(IterativePE):
         return self.compute_fn(data, **self.params)
 
 
-from dispel4py.workflow_graph import WorkflowGraph
-
-
 def create_iterative_chain(functions,
                            FunctionPE_class=SimpleFunctionPE,
                            name_prefix='PE_',
                            name_suffix=''):
-
     '''
     Creates a composite PE wrapping a pipeline that processes obspy streams.
     :param chain: list of functions that process data iteratively. The function
@@ -229,6 +226,7 @@ class CompositePE(WorkflowGraph):
             def __init__(self, limit)
                 CompositePE.__init__(self, create_graph, limit)
     '''
+
     def __init__(self, create_graph=None, params={}):
         '''
         Instantiate and populate the graph, if the function provided.

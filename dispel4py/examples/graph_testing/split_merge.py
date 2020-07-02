@@ -80,5 +80,6 @@ def testSplitMerge():
     graph.connect(cons2, 'output', last, 'input1')
     return graph
 
+
 ''' important: this is the graph_variable '''
 graph = testSplitMerge()

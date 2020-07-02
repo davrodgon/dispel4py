@@ -79,5 +79,6 @@ def testTee():
     graph.connect(prod, 'output', cons2, 'input')
     return graph
 
+
 ''' important: this is the graph_variable '''
 graph = testTee()

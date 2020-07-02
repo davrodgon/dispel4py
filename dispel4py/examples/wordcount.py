@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+from dispel4py.workflow_graph import WorkflowGraph
 from dispel4py.base import IterativePE, ConsumerPE, CompositePE
 
 from collections import defaultdict
@@ -72,8 +73,6 @@ def count_by_group():
     composite._map_output('output', merge, 'output')
     return composite
 
-
-from dispel4py.workflow_graph import WorkflowGraph
 
 graph = WorkflowGraph()
 textfile = SplitTextFile()

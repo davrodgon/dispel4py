@@ -29,8 +29,10 @@ def testPipeline():
     graph = WorkflowGraph()
     graph.connect(prod, 'output', cons1, 'input')
     graph.connect(cons1, 'output', cons2, 'input')
-    results = simple_process.process_and_return(graph, inputs={ prod : [ {}, {}, {}, {}, {} ] } )
-    assert { cons2.id : { 'output' : [1, 2, 3, 4, 5] } } == results
+    results = simple_process.process_and_return(
+        graph, inputs={prod: [{}, {}, {}, {}, {}]})
+    assert {cons2.id: {'output': [1, 2, 3, 4, 5]}} == results
+
 
 def testSquare():
     graph = WorkflowGraph()
@@ -42,8 +44,9 @@ def testSquare():
     graph.connect(prod, 'output1', cons2, 'input')
     graph.connect(cons1, 'output', last, 'input0')
     graph.connect(cons2, 'output', last, 'input1')
-    results = simple_process.process_and_return(graph, { prod : [{}]} )
-    assert {last.id : { 'output' :['1', '1']} } == results
+    results = simple_process.process_and_return(graph, {prod: [{}]})
+    assert {last.id: {'output': ['1', '1']}} == results
+
 
 def testTee():
     graph = WorkflowGraph()
@@ -53,8 +56,11 @@ def testTee():
     cons2 = t.TestOneInOneOut()
     graph.connect(prod, 'output', cons1, 'input')
     graph.connect(prod, 'output', cons2, 'input')
-    results = simple_process.process_and_return(graph, {prod: [{}, {}, {}, {}, {}]})
-    assert { cons1.id : {'output': [1, 2, 3, 4, 5]}, cons2.id: {'output' : [1, 2, 3, 4, 5]} } == results
+    results = simple_process.process_and_return(
+        graph, {prod: [{}, {}, {}, {}, {}]})
+    assert {cons1.id: {'output': [1, 2, 3, 4, 5]}, cons2.id: {
+        'output': [1, 2, 3, 4, 5]}} == results
+
 
 def testWriter():
     graph = WorkflowGraph()
@@ -62,5 +68,6 @@ def testWriter():
     prev = prod
     cons1 = t.TestOneInOneOutWriter()
     graph.connect(prod, 'output', cons1, 'input')
-    results = simple_process.process_and_return(graph, {prod: [{}, {}, {}, {}, {}]})
-    assert { cons1.id : {'output': [1, 2, 3, 4, 5]} } == results
+    results = simple_process.process_and_return(
+        graph, {prod: [{}, {}, {}, {}, {}]})
+    assert {cons1.id: {'output': [1, 2, 3, 4, 5]}} == results

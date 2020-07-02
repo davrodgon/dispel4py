@@ -331,6 +331,7 @@ def drawDot(graph, img_type='png'):   # pragma: no cover
     stdout, stderr = p.communicate(dot.encode('utf-8'))
     return stdout
 
+
 def write_image(graph, filename, img_type='png'):
     '''
     Draws the workflow as a graph using graphviz dot and writes the image

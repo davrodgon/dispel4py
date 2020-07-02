@@ -39,6 +39,10 @@ Other parameters might be required by the target mapping, for example the
 number of processes if running in a parallel environment.
 
 '''
+import time
+import copy
+from dispel4py.core import GenericPE
+from dispel4py.workflow_graph import WorkflowGraph
 import sys
 import argparse
 import os
@@ -171,7 +175,7 @@ class GroupByCommunication(object):
         self.destinations = destinations
         self.input_name = input_name
         self.name = groupby
-        
+
     def getDestination(self, data):
         output = tuple([data[self.input_name][x] for x in self.groupby])
         dest_index = abs(make_hash(output)) % len(self.destinations)
@@ -208,10 +212,10 @@ def _getConnectedInputs(node, graph):
 
 
 def _getNumProcesses(size, numSources, numProcesses, totalProcesses):
-    
-    if (numProcesses>1) or (numProcesses==0):
+
+    if (numProcesses > 1) or (numProcesses == 0):
         return numProcesses
-    
+
     div = max(1, totalProcesses - numSources)
     return int(numProcesses * (size - numSources) / div)
 
@@ -242,7 +246,7 @@ def _assign_processes(workflow, size):
         node_counter = 0
         for node in graph.nodes():
             pe = node.getContainedObject()
-            prcs = 1 if pe.id in sources or (hasattr(pe, 'single') and pe.single==True) else _getNumProcesses(
+            prcs = 1 if pe.id in sources or (hasattr(pe, 'single') and pe.single == True) else _getNumProcesses(
                 size, numSources, pe.numprocesses, totalProcesses)
             processes[pe.id] = range(node_counter, node_counter + prcs)
             node_counter = node_counter + prcs
@@ -322,16 +326,12 @@ def assign_and_connect(workflow, size):
     else:
         return None
 
-import copy
-
-from dispel4py.workflow_graph import WorkflowGraph
-
 
 def get_partitions(workflow):
     try:
         partitions = workflow.partitions
     except AttributeError:
-        print ("no predefined partitions")
+        print("no predefined partitions")
         sourcePartition = []
         otherPartition = []
         graph = workflow.graph
@@ -345,11 +345,12 @@ def get_partitions(workflow):
         workflow.partitions = partitions
     return partitions
 
+
 def get_partitions_adv(workflow):
     try:
         partitions = workflow.partitions
     except AttributeError:
-        print ("no predefined partitions")
+        print("no predefined partitions")
         sourcePartition = []
         otherPartition = []
         graph = workflow.graph
@@ -382,7 +383,7 @@ def create_partitioned(workflow_all):
         component_ids = [pe.id for pe in part]
         workflow = copy.deepcopy(workflow_all)
         graph = workflow.graph
-        for node in list(graph.nodes()): 
+        for node in list(graph.nodes()):
             if node.getContainedObject().id not in component_ids:
                 graph.remove_node(node)
         processes, inputmappings, outputmappings = \
@@ -499,9 +500,6 @@ def _no_map(data):
     return data
 
 
-from dispel4py.core import GenericPE
-
-
 def _is_root(node, workflow):
     result = True
     pe = node.getContainedObject()
@@ -545,6 +543,7 @@ class SimpleProcessingPE(GenericPE):
     '''
     A PE that processes a subgraph of PEs in sequence.
     '''
+
     def __init__(self, input_mappings, output_mappings, proc_to_pe):
         GenericPE.__init__(self)
         # work out the order of PEs
@@ -695,15 +694,15 @@ class SimpleWriter(object):
             if self.result_mappings is None:
                 self.simple_pe.wrapper._write((self.pe.id, output_name),
                                               [data])
-                
+
         # now check if the output is in the named results
         # (in case of a Tee) then data gets written to the PE results as well
         try:
-            
+
             if output_name in self.result_mappings[self.pe.id]:
                 self.simple_pe.wrapper._write((self.pe.id, output_name),
                                               [data])
-                
+
                 #self.pe.log('SPE Writing %s to %s' % (data, output_name))
         except:
             pass
@@ -770,6 +769,7 @@ def create_inputs(args, graph):
 
     return inputs
 
+
 def load_graph_and_inputs(args):
     from dispel4py.utils import load_graph
     graph = load_graph(args.module, args.attr)
@@ -785,9 +785,10 @@ def load_graph_and_inputs(args):
         else:
             from dispel4py.provenance import init_provenance_config, configure_prov_run, ProvenanceType
             prov_config, remaining = init_provenance_config(args, inputs)
-             ## Ignore returned remaining command line arguments. Will be taken care of in main()
+            # Ignore returned remaining command line arguments. Will be taken care of in main()
             print(prov_config)
-            configure_prov_run(graph, provImpClass=(ProvenanceType,),sprovConfig=prov_config )
+            configure_prov_run(graph, provImpClass=(
+                ProvenanceType,), sprovConfig=prov_config)
 
     return graph, inputs
 
@@ -796,17 +797,17 @@ def parse_common_args():   # pragma: no cover
     parser = create_arg_parser()
     return parser.parse_known_args()
 
-import time
+
 def main():   # pragma: no cover
     from importlib import import_module
-    
+
     args, remaining = parse_common_args()
 
     graph, inputs = load_graph_and_inputs(args)
 
     if graph is None:
         return
-    
+
     try:
         # see if platform is in the mappings file as a simple name
         target = config[args.target]
@@ -823,14 +824,14 @@ def main():   # pragma: no cover
         # no other arguments required for target
         pass
     process = getattr(import_module(target), 'process')
-    elapsed_time=0
+    elapsed_time = 0
     start_time = time.time()
     errormsg = process(graph, inputs=inputs, args=args)
     if errormsg:
         print(errormsg)
-        
-    print ("ELAPSED TIME: "+str(time.time()-start_time))
-    
+
+    print("ELAPSED TIME: "+str(time.time()-start_time))
+
 
 if __name__ == "__main__":  # pragma: no cover
     main()

@@ -97,5 +97,6 @@ def testGrouping():
 
     return graph
 
+
 ''' important: this is the graph_variable '''
 graph = testGrouping()
