@@ -2,6 +2,7 @@ config:
   project_repos:
     dispel4py:
       repo: 'https://github.com/davrodgon/dispel4py.git'
+      branch: eosc-synergy
 
 sqa_criteria:
   qc_style:
