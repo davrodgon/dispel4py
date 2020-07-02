@@ -27,7 +27,8 @@ import time
 import zmq
 from zmq.devices.basedevice import ProcessDevice
 
-def init_streamer(frontend_port,backend_port):
+
+def init_streamer(frontend_port, backend_port):
     streamerdevice = ProcessDevice(zmq.STREAMER, zmq.PULL, zmq.PUSH)
     streamerdevice.bind_in("tcp://127.0.0.1:%d" % frontend_port)
     streamerdevice.bind_out("tcp://127.0.0.1:%d" % backend_port)
@@ -79,12 +80,12 @@ def process(workflow, inputs, args):
     jobs = []
     for proc, workflow in workers.items():
         p = multiprocessing.Process(
-                target=_processWorker,
-                args=(topic, proc, workflow,))
+            target=_processWorker,
+            args=(topic, proc, workflow,))
         jobs.append(p)
 
     print('Starting {} workers communicating via topic {}'.
-            format(len(workers), topic))
+          format(len(workers), topic))
     for j in jobs:
         j.start()
     for j in jobs:
@@ -100,7 +101,7 @@ class ZMQProducer():
         self.socket.connect("tcp://127.0.0.1:%d" % port)
 
     def write(self, value):
-        msg = msgpack.packb(value, use_bin_type=True)    
+        msg = msgpack.packb(value, use_bin_type=True)
         self.socket.send(msg)
 
     def send(self, topic, value):
@@ -146,10 +147,10 @@ class GenericWriter():
 def _processWorker(topic, proc, workflow):
     frontend_port = 5559
     backend_port = 5560
-    pes = {node.getContainedObject().id: node.getContainedObject() 
-            for node in workflow.graph.nodes()}
-    nodes = {node.getContainedObject().id: node 
-            for node in workflow.graph.nodes()}
+    pes = {node.getContainedObject().id: node.getContainedObject()
+           for node in workflow.graph.nodes()}
+    nodes = {node.getContainedObject().id: node
+             for node in workflow.graph.nodes()}
     producer = ZMQProducer(port=frontend_port)
     consumer = ZMQConsumer(port=backend_port)
     while True:
@@ -165,15 +166,15 @@ def _processWorker(topic, proc, workflow):
             pe = pes[pe_id]
             for o in pe.outputconnections:
                 pe.outputconnections[o]['writer'] = GenericWriter(
-                        producer, 
-                        pe_id, o)
+                    producer,
+                    pe_id, o)
             output = pe.process(data)
             print('{} writing output: {}'.format(pe.id, output))
             for output_name, output_value in output.items():
                 destinations = map_output(
-                        workflow.graph,
-                        nodes[pe_id],
-                        output_name)
+                    workflow.graph,
+                    nodes[pe_id],
+                    output_name)
                 if not destinations:
                     print(
                         'Output collected from {}: {}'
