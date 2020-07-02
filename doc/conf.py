@@ -12,6 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from datetime import datetime
 import sys
 import os
 
@@ -54,7 +55,6 @@ copyright = u'2014, The University of Edinburgh'
 # built documents.
 #
 # The short X.Y version.
-from datetime import datetime
 year_month = datetime.now().strftime('%Y.%m')
 version = year_month
 # The full version, including alpha/beta/rc tags.
@@ -109,12 +109,12 @@ html_theme = 'dispel4py_theme'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = { 'header_text' : 'dispel4py.org', 
-                       'header_link' : 'http://dispel4py.org',
-                       'transparent_logo' : 'DISPEL4PY_mono_white_trans.png ' }
+html_theme_options = {'header_text': 'dispel4py.org',
+                      'header_link': 'http://dispel4py.org',
+                      'transparent_logo': 'DISPEL4PY_mono_white_trans.png '}
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [ '.' ]
+html_theme_path = ['.']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -190,22 +190,22 @@ htmlhelp_basename = 'Dispel4Pydoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    # 'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    # 'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    # 'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'dispel4py.tex', u'dispel4py Documentation',
-   u'The University of Edinburgh', 'manual'),
+    ('index', 'dispel4py.tex', u'dispel4py Documentation',
+     u'The University of Edinburgh', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -248,9 +248,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'dispel4py', u'dispel4py Documentation',
-   u'The University of Edinburgh', 'dispel4py', 'Developing workflows for data-intensive applications.',
-   'Miscellaneous'),
+    ('index', 'dispel4py', u'dispel4py Documentation',
+     u'The University of Edinburgh', 'dispel4py', 'Developing workflows for data-intensive applications.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
