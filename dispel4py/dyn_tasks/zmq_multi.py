@@ -35,6 +35,7 @@ def init_streamer(frontend_port,backend_port):
     streamerdevice.setsockopt_out(zmq.IDENTITY, "PUSH".encode('utf-8'))
     streamerdevice.start()
 
+
 def map_output(graph, node, output_name):
     result = set()
     pe_id = node.getContainedObject().id
@@ -47,14 +48,15 @@ def map_output(graph, node, output_name):
             result.add((dest.id, dest_input))
     return result
 
+
 def process(workflow, inputs, args):
     size = args.num
     topic = ""
     frontend_port = 5559
     backend_port = 5560
-    init_streamer(frontend_port,backend_port)
-    print("Streamer initialised")    
-    producer = ZMQProducer(port=frontend_port,value_serializer=msgpack.packb)
+    init_streamer(frontend_port, backend_port)
+    print("Streamer initialised")
+    producer = ZMQProducer(port=frontend_port, value_serializer=msgpack.packb)
     workers = {}
     for node in workflow.graph.nodes():
         pe = node.getContainedObject()
@@ -76,10 +78,12 @@ def process(workflow, inputs, args):
 
     jobs = []
     for proc, workflow in workers.items():
-        p = multiprocessing.Process(target=_processWorker, args=(topic, proc, workflow,))
+        p = multiprocessing.Process(target=_processWorker, 
+                args=(topic, proc, workflow,))
         jobs.append(p)
 
-    print('Starting {} workers communicating via topic {}'.format(len(workers), topic))
+    print('Starting {} workers communicating via topic {}'.
+            format(len(workers), topic))
     for j in jobs:
         j.start()
     for j in jobs:
@@ -102,11 +106,10 @@ class ZMQProducer():
         self.write(value=value)
 
 
-
 class ZMQConsumer():
-    def __init__(self,port,value_serializer=msgpack.packb):
+    def __init__(self, port, value_serializer = msgpack.packb):
         self.port = port
-        self.value_serializer=value_serializer
+        self.value_serializer = value_serializer
         context = zmq.Context()
         self.socket = context.socket(zmq.PULL)
         self.socket.connect("tcp://127.0.0.1:%d" % port)
@@ -124,7 +127,7 @@ class ZMQConsumer():
             raise StopIteration
         return value
 
- 
+
 class GenericWriter():
     def __init__(self, producer, pe_id, output_name):
         self.producer = producer
@@ -142,8 +145,10 @@ class GenericWriter():
 def _processWorker(topic, proc, workflow):
     frontend_port = 5559
     backend_port = 5560
-    pes = {node.getContainedObject().id: node.getContainedObject() for node in workflow.graph.nodes()}
-    nodes = {node.getContainedObject().id: node for node in workflow.graph.nodes()}
+    pes = {node.getContainedObject().id: node.getContainedObject() 
+            for node in workflow.graph.nodes()}
+    nodes = {node.getContainedObject().id: node 
+            for node in workflow.graph.nodes()}
     producer = ZMQProducer(port=frontend_port)
     consumer = ZMQConsumer(port=backend_port)
     while True:
@@ -155,18 +160,22 @@ def _processWorker(topic, proc, workflow):
 
         try:
             pe_id, data = value
-            print('{} receiver input: {}'.format(pe_id,data))
+            print('{} receiver input: {}'.format(pe_id, data))
             pe = pes[pe_id]
             for o in pe.outputconnections:
-                pe.outputconnections[o]['writer'] = GenericWriter(producer, pe_id, o)
+                pe.outputconnections[o]['writer'] = GenericWriter(producer, 
+                        pe_id, o)
             output = pe.process(data)
             print('{} writing output: {}'.format(pe.id, output))
             for output_name, output_value in output.items():
-                destinations = map_output(workflow.graph, nodes[pe_id], output_name)
+                destinations = map_output(workflow.graph, 
+                        nodes[pe_id], output_name)
                 if not destinations:
-                    print('Output collected from {}: {}'.format(pe_id, output_value))
+                    print('Output collected from {}: {}'
+                            .format(pe_id, output_value))
                 for dest_id, input_name in destinations:
-                    producer.send(topic, value=(dest_id, {input_name: output_value}))
+                    producer.send(topic, value=(dest_id, 
+                        {input_name: output_value}))
         except Exception as e:
             print(e)
             pass
@@ -185,6 +194,3 @@ def parse_args(args, namespace):
                         help='topic name')
     result = parser.parse_args(args, namespace)
     return result
-
-
-
