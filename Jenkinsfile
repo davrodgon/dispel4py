@@ -1,4 +1,4 @@
-@Library(['github.com/indigo-dc/jenkins-pipeline-library@escape-whitespaces']) _
+@Library(['github.com/davrodgon/jenkins-pipeline-library@feature/reimplement']) _
 
 def projectConfig
 
