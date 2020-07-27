@@ -25,9 +25,9 @@ sqa_criteria:
   qc_security:
     repos:
       deepaas:
-        container: DEEPaaS-testing
+        container: dispel4py-testing
         tox:
-          tox_file: /deepaas-testing/tox.ini
+          tox_file: /dispel4py-testing/tox.ini
           testenv:
             - bandit              
 
