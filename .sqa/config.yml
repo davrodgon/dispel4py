@@ -4,4 +4,15 @@ config:
       repo: 'https://github.com/davrodgon/dispel4py.git'
       branch: eosc-synergy
 
+sqa_criteria:
+  qc_coverage:
+    repos:
+      deepaas:
+        container: dispel4py-testing
+        tox:
+          tox_file: /dispel4py-testing/tox.ini
+          testenv: 
+            - cover
+            - cobertura
+
 
