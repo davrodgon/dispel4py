@@ -5,13 +5,16 @@ config:
       branch: eosc-synergy
 
 sqa_criteria:
-  qc_style:
+  qc_accessibility:
     repos:
       dispel4py:
         container: dispel4py-testing
-        tox:
-          tox_file: /dispel4py-testing/tox.ini
-          testenv: 
-            - stylecheck
-
+        commands:
+          - python --version
+  qc_licensing:
+    repos:
+      dispel4py:
+        container: dispel4py-testing
+        commands: 
+          - python --version 
 
