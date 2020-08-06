@@ -5,6 +5,12 @@ config:
       branch: eosc-synergy
 
 sqa_criteria:
+  qc_licensing:
+    repos:
+      dispel4py:
+        container: dispel4py-testing
+        commands: 
+          - python setup.py build_sphinx 
   qc_style:
     repos:
       dispel4py:
