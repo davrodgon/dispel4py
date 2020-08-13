@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   dispel4py-testing:
-    image: "indigodatacloud/ci-images:python3.6"
+    image: "davrodgon/ci-images:pygithub"
     hostname: "dispel4py-testing"
     volumes:
      - type: bind

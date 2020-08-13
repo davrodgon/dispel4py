@@ -16,5 +16,6 @@ sqa_criteria:
       dispel4py:
         container: dispel4py-testing
         commands: 
-          - python --version 
+          - getRepoLicense.py davrodgon/javapoet
+
 
