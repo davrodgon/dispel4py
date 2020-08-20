@@ -1,0 +1,38 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/Apache-2.0",
+    "codeRepository": "https://github.com/dispel4py/dispel4py",
+    "name": "Dispel4py",
+    "version": "1.2",
+    "description": "dispel4py is a free and open-source Python library for describing abstract stream-based workflows for distributed data-intensive applications. It enables users to focus on their scientific methods, avoiding distracting details and retaining flexibility over the computing infrastructure they use. It delivers mappings to diverse computing infrastructures, including cloud technologies, HPC architectures and specialised data-intensive machines, to move seamlessly into production with large-scale data loads. The dispel4py system maps workflows dynamically onto multiple enactment systems, such as MPI, STORM and Multiprocessing, without users having to modify their workflows.",
+    "referencePublication": "DOPI:10.1109/eScience.2015.40",
+    "keywords": [
+        "workflow"
+    ],
+    "programmingLanguage": [
+        "Python"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "givenName": "Rosa",
+            "familyName": "Filgueira"
+        },
+        {
+            "@type": "Person",
+            "givenName": " Amrey",
+            "familyName": "Krause"
+        },
+        {
+            "@type": "Person",
+            "givenName": "Alessandro",
+            "familyName": "Spinuso"
+        },
+        {
+            "@type": "Person",
+            "givenName": "Iraklis",
+            "familyName": "Klampanos"
+        }
+    ]
+}
