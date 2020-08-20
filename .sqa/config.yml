@@ -10,12 +10,12 @@ sqa_criteria:
       dispel4py:
         container: dispel4py-testing
         commands:
-          - python --version
+          - checkCitable.py davrodgon/dispel4py
   qc_licensing:
     repos:
       dispel4py:
         container: dispel4py-testing
         commands: 
-          - getRepoLicense.py davrodgon/javapoet
+          - checkLicense.py davrodgon/dispel4py
 
 
