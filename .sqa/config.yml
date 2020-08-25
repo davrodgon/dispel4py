@@ -14,7 +14,6 @@ sqa_criteria:
   qc_licensing:
     repos:
       dispel4py:
-        container: dispel4py-testing
         commands: 
           - checkLicense.py davrodgon/dispel4py
 
