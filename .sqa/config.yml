@@ -9,6 +9,7 @@ sqa_criteria:
     repos:
       dispel4py:        
         tox:
+          container: dispel4py-testing
           tox_file: /dispel4py-testing/tox.ini
           testenv:
             - stylecheck

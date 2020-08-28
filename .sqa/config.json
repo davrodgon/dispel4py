@@ -20,7 +20,7 @@
     },
     "qc_licensing": {
       "repos": {
-        "dispel4py-syn": null
+        "dispel4py-syn": {}}
       }
     }
   }
