@@ -8,7 +8,7 @@ sqa_criteria:
   qc_accessibility:
     repos:
       dispel4py:
-        container: dispel4py-testing
+        container: dispel4py-testing        
         commands:
           - checkCitable.py davrodgon/dispel4py
   qc_licensing:

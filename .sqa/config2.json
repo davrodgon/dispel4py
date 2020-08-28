@@ -1,0 +1,24 @@
+{
+  "config": {
+    "project_repos": {
+      "dispel4py": {
+        "repo": "https://github.com/davrodgon/dispel4py.git",
+        "branch": "eosc-synergy"
+      }
+    }
+  },
+  "sqa_criteria": {
+    "qc_accessibility": {
+      "repos": {
+        "dispel4py": {},
+    "qc_licensing": {
+      "repos": {
+        "dispel4py": {
+          "paths": [
+            "mylicense.txt"
+          ]
+        }
+      }
+    }
+  }
+}
