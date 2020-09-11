@@ -8,7 +8,9 @@ sqa_criteria:
   qc_licensing:
     repos:
       dispel4py:
-        path: License.txt
+        path: 
+          - License.txt
+          - mylicense
     
   qc_style:
     repos:
