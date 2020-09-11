@@ -6,7 +6,10 @@ config:
 
 sqa_criteria:
   qc_licensing:
-    path: License.txt
+    repos:
+      dispel4py:
+        path: License.txt
+    
   qc_style:
     repos:
       dispel4py:
