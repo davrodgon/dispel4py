@@ -5,6 +5,8 @@ config:
       branch: eosc-synergy
 
 sqa_criteria:
+  qc_licensing:
+    path: License.txt
   qc_style:
     repos:
       dispel4py:
