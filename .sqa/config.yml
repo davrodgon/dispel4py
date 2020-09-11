@@ -8,7 +8,7 @@ sqa_criteria:
   qc_style:
     repos:
       dispel4py:
-        sqa_criterion_executor:
+        executor:
           container: dispel4py-testing
           tox:
             tox_file: /dispel4py-testing/tox.ini
